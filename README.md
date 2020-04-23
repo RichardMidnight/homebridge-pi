@@ -10,5 +10,6 @@ It installs the prerequisites, homebridge, homebridge service, config-ui, and se
 
 To run this, open a terminal and copy and paste in the next two lines
    curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/test.sh
+   
    bash test.sh
    
