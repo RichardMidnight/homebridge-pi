@@ -62,6 +62,6 @@ echo_white_ne()     { (echo -e -ne "${WHITE}$*${NC}") }
 echo_black()        { (echo -e "${BLACK}$*${NC}") }
 }
 
-set_colors
+setup_colors
 echo_blue Hello World
 help
