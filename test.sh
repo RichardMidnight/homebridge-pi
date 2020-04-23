@@ -17,11 +17,11 @@ echo  - homebrige server and homebridge service
 echo  - the config-ui-x plug-in
 echo
 echo Usage - only one switch allowed:
-echo no switch - install with prompts
-echo -y answer yes on install
-echo -u uninstall
-echo -i homebridge info
-echo -h help
+echo "      install with prompts"
+echo "  -y  install and answer yes"
+echo "  -u  uninstall"
+echo "  -i  homebridge info"
+echo "  -h  help"
 }
 
 setup_colors() {
