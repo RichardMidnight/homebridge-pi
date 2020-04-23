@@ -1,5 +1,5 @@
 # homebridge-pi
-homebridge for raspberry pi
+Homebridge for raspberry pi 2020
 
 Homebridge is very cool. I struggled to get it installed and working on a Raspberry Pi. I tried so many different combinations and bits of information, that I finally coded it all into an installation script. install.homebridge-pi.sh
 
