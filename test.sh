@@ -1,7 +1,7 @@
 #!/bin/bash
 
 help() {
-echo This script greatly simplifies the installation of Homebridge on a Raspberry Pi
+echo This script automates the installation of Homebridge on a Raspberry Pi
 echo
 echo_red WARNING... this will clobber any existing homebrige installation
 echo
@@ -61,6 +61,7 @@ echo_white()        { (echo -e "${WHITE}$*${NC}") }
 echo_white_ne()     { (echo -e -ne "${WHITE}$*${NC}") }
 echo_black()        { (echo -e "${BLACK}$*${NC}") }
 }
+
 
 setup_colors
 echo_blue Hello World
