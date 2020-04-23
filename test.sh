@@ -64,5 +64,4 @@ echo_black()        { (echo -e "${BLACK}$*${NC}") }
 
 
 setup_colors
-echo_blue Hello World
 help
