@@ -10,13 +10,13 @@ It installs the prerequisites, homebridge, homebridge service, config-ui, and se
 
 To run this (on your new Raspbian or Raspberry-Pi-OS image), open a terminal and copy and paste in the next two lines
 
-   curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh
+   **curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh**
    
-   bash homebridge-pi.sh install
+   **bash homebridge-pi.sh install**
    
    
 You can also uninstall by typing
 
    bash homebridge-pi.sh uninstall
    
-Type "bash homebridge-pi.sh -h"  for standard help.   
+Type **bash homebridge-pi.sh -h**  for standard help.   
