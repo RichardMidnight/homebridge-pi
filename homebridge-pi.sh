@@ -16,7 +16,7 @@
 #note:  sudo systemctl daemon-reload
 
 
-SCRIPT_VER=20200620.001
+SCRIPT_VER=20200620.002
 
 #minimums
 NODEJS_MIN=12
@@ -46,6 +46,7 @@ echo "  -j                 display and check config.json file"
 echo "  -v, --version      output script version"
 echo "  -h, --help         more help" 
 echo
+echo "EXAMPLE:  bash homebridge-pi.sh install"
 
 }
 
