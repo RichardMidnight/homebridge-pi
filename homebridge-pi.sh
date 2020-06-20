@@ -16,7 +16,7 @@
 #note:  sudo systemctl daemon-reload
 
 
-SCRIPT_VER=20200620.002
+SCRIPT_VER=20200620.003
 
 #minimums
 NODEJS_MIN=12
@@ -26,7 +26,7 @@ PI4_WIPI_MIN=2.52
   
 BACKUP_FOLDER="/var/lib/homebridge/backups"
 SERVICE_ACCOUNT=$(whoami)
-SCRIPT_SOURCE="https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh"
+SCRIPT_SOURCE="https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/"
 SCRIPT_NAME=${0##*/}
 
 
