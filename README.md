@@ -17,6 +17,6 @@ To run this (on your new Raspbian or Raspberry-Pi-OS image), open a terminal and
    
 You can also uninstall by typing
 
-   >bash homebridge-pi.sh uninstall
+   &nbsp;&nbsp;&nbsp;bash homebridge-pi.sh uninstall
    
 Type **bash homebridge-pi.sh -h**  for standard help.   
