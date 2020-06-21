@@ -12,10 +12,14 @@ To run this (on your new Raspbian or Raspberry-Pi-OS image), open a terminal and
 
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh**
    
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh install**
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh**
    
    
-You can also uninstall by typing
+You can install by typing
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh install**
+
+You can uninstall by typing
 
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh uninstall**
    
