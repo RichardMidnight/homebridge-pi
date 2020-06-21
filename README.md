@@ -20,3 +20,9 @@ You can also uninstall by typing
    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh uninstall**
    
 Type **bash homebridge-pi.sh -h**  for standard help.   
+
+ &nbsp;
+ 
+ Here is a screen shot of it installed.
+
+![Image](https://github.com/RichardMidnight/homebridge-pi/blob/master/screenshot.PNG?raw=true)
