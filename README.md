@@ -15,11 +15,11 @@ To run this (on your new Raspbian or Raspberry-Pi-OS image), open a terminal and
       bash homebridge-pi.sh
    
    
-You can install by typing
+You can automatically install homebridge by typing
 
       bash homebridge-pi.sh install
 
-You can uninstall by typing
+You can automatically uninstall homebridge by typing
 
       bash homebridge-pi.sh uninstall
    
