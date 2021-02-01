@@ -1,5 +1,5 @@
 # homebridge-pi
-Automated installation of Homebridge on a raspberry pi  (2018,2019,2020)
+Simplified installation of Homebridge on a raspberry pi  (2018,2019,2020)
 
 Homebridge is VERY cool, but I struggled to get it installed and working on a Raspberry Pi in 2018 when I was automating my garage doors. I tried so many different combinations from many bits of information that I finally coded it all into an installation script homebridge-pi.sh.  I updated it over the years and now with hb-serivce it is much simpler.  This gets the basic system up and running quickly, then you can get right to playing with the plugins.  Many thanks to all the contributors who made this possible.
 
@@ -10,18 +10,18 @@ It installs the prerequisites, homebridge, homebridge service, config-ui, and se
 
 To run this (on your new Raspbian or Raspberry-Pi-OS image), open a terminal and copy and paste in the next two lines
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh**
+      curl -O https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/homebridge-pi.sh
    
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh**
+      bash homebridge-pi.sh
    
    
 You can install by typing
 
-  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh install**
+      bash homebridge-pi.sh install
 
 You can uninstall by typing
 
-   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;**bash homebridge-pi.sh uninstall**
+      bash homebridge-pi.sh uninstall
    
 Type **bash homebridge-pi.sh -h**  for standard help.   
 
