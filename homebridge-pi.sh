@@ -1,7 +1,7 @@
 #!/bin/bash
 # homebridge-pi install, uninstall, monitor etc.
 
-# 2018/8/2; 2020/05/27
+# 2018/8/2; 2020/05/27; 2021/02/03
 # By Richard Reed
 
 #note: jessey amd64 desktop needs this first:
@@ -13,14 +13,20 @@
 # bash homebridge-pi.sh install
 #
 
+#References
+#https://github.com/homebridge/homebridge
+#https://github.com/homebridge/homebridge/wiki/Install-Homebridge-on-Raspbian
+
+
 #note:  sudo systemctl daemon-reload
 
 
-SCRIPT_VER=20200620.003
+SCRIPT_VER=20210204.002
 
 #minimums
-NODEJS_MIN=12
-NODEJS_REC=12
+#NODEJS_MIN=12
+#NODEJS_REC=14    	#buster 32
+#NODEJS_REC=12		#buster 64
 PI4_WIPI_MIN=2.52
   
   
@@ -28,7 +34,6 @@ BACKUP_FOLDER="/var/lib/homebridge/backups"
 SERVICE_ACCOUNT=$(whoami)
 SCRIPT_SOURCE="https://raw.githubusercontent.com/RichardMidnight/homebridge-pi/master/"
 SCRIPT_NAME=${0##*/}
-
 
 
 ####################################################################################
@@ -240,6 +245,8 @@ pi_model() {
 
 
 
+
+
 os_version() {
   # -s = short
   case $1 in
@@ -381,7 +388,7 @@ homebridge_rename(){
 	fi
 
 	if [[ $RESULT == "y" ]]; then
-	
+
 		echo Set homebridge name ...
 		homebridge_name_set
 		jq .bridge.name /var/lib/homebridge/config.json | cut -d\" -f2
@@ -395,7 +402,7 @@ homebridge_rename(){
 		jq .bridge.pin /var/lib/homebridge/config.json | cut -d\" -f2
 		
 		sudo hb-service restart
-	
+
 	fi
 }
 
@@ -751,48 +758,56 @@ install_prerequisites(){
 	sudo apt install -y libavahi-compat-libdnssd-dev
 	check_exit_code $?
 
+
+	# just incase these are missing
+	sudo apt install gcc g++ make python net-tools
 	
-	if ! [ -z $(which nodejs) ]; then
-		NODEJS_VER=$(nodejs -v | cut -dv -f2 | cut -d. -f1)
-	else	
-		NODEJS_VER=0
-	fi	
+	
+	#if [ ! -z $(which nodejs) ]; then
+#		NODEJS_VER=$(nodejs -v | cut -dv -f2 | cut -d. -f1)
+	#else	
+	#	NODEJS_VER=0
+	#fi	
 		
 
-	echo Distro nodejs ver:
-	NODEJS_DISTRO=$(sudo apt show nodejs | grep Version | cut -d' ' -f2 | cut -d. -f1)
+#	echo Distro nodejs ver:
+#	NODEJS_DISTRO=$(sudo apt show nodejs | grep Version | cut -d' ' -f2 | cut -d. -f1)
 
 
-	echo_white Nodejs versions:
-	echo Installed  Nodejs Ver is $NODEJS_VER
-	echo Distro     Nodejs Ver is $NODEJS_DISTRO
-	echo Recomended Nodejs Ver is $NODEJS_REC
+#	echo_white Nodejs versions:
+#	echo Installed  Nodejs Ver is $NODEJS_VER
+#	echo Distro     Nodejs Ver is $NODEJS_DISTRO
+#	echo Recomended Nodejs Ver is $NODEJS_REC
 
-	sleep 5
+#	sleep 5
 	
 	
-	if [ $NODEJS_REC -gt $NODEJS_VER ] && [ $NODEJS_REC -gt $NODEJS_DISTRO ]; then 
-		echo_white "Getting node $NODEJS_REC from nodesource.com ... "
-		curl -sL https://deb.nodesource.com/setup_$NODEJS_REC.x | sudo -E bash -
-		check_exit_code $?
-	fi
+#	if [ $NODEJS_REC -gt $NODEJS_VER ] && [ $NODEJS_REC -gt $NODEJS_DISTRO ]; then 
+#		echo_white "NOT Getting node $NODEJS_REC from nodesource.com ... "
+##		curl -sL https://deb.nodesource.com/setup_$NODEJS_REC.x | sudo -E bash -
+#		check_exit_code $?
+#	fi
 	
 	
 	echo_white "Installing nodejs ... "
+#	if [ $NODEJS_REC > $(nodejs -v) ]; then
 	sudo apt install nodejs -y
 	check_exit_code $?
 	echo nodejs ver: $(node -v)
+#	else
+#		echo Nodejs already up to date
+#	fi
 	
 	
-	if [ -z $(npm -v) ] ; then
-		echo_white "Installing npm (node package manager) ..."
-		sudo apt install npm -y
-		check_exit_code $?
-	fi
+	#if [ -z $(npm -v) ] ; then
+	echo_white "Installing npm (node package manager) ..."
+	sudo apt install npm -y
+	check_exit_code $?
+	#fi
 	echo npm ver: $(npm -v)
 	
 	
-	echo_white Updating npm ...
+	echo_white Updating npm to latest ...
 	sudo npm install -g npm
 	check_exit_code $?
 	echo nodejs ver: $(node -v)
@@ -814,11 +829,11 @@ install_prerequisites(){
 
 
 
-install_homebridge(){
+homebridge_install(){
 	echo_white "Installing Homebridge (homekit server) ..."
 	sudo npm install -g homebridge
 	EXIT_CODE=$?
-	if ! [[ $EXIT_CODE == 0 ]]; then 
+	if  [[ $EXIT_CODE != 0 ]]; then 
 		echo ERROR $EXIT_CODE. Retrying with --unsafe-perm
 		sudo npm install -g homebridge --unsafe-perm
 		check_exit_code $?
@@ -844,11 +859,14 @@ Type=Application
 Categories=None;" >> "/home/$SERVICE_ACCOUNT/Desktop/HomebridgeFolder.desktop"
   
 	
-	
-	
 	echo_white "Installing homebridge-config-ui-x (browser interface)..."
-    sudo npm install -g --unsafe-perm homebridge-config-ui-x -y
+	sudo npm install -g homebridge-config-ui-x -y
 	EXIT_CODE=$?
+	if [ $EXIT_CODE != 0 ]; then
+		echo_white Retrying with --unsafe-perm ...
+		sudo npm install -g --unsafe-perm homebridge-config-ui-x -y
+		EXIT_CODE=$?
+	fi	
 
 	#make_homebridge_ui_x_shortcut
 	#EXIT_CODE=$?
@@ -876,7 +894,23 @@ Categories=None;" >> "/var/lib/homebridge/Homebridge.desktop"
 #}	
 	
 	
-	# this creates the auto start service
+	
+	# upgrade to recomended node and npm
+	echo_white Updating npm to latest ...
+	sudo npm install -g npm
+	check_exit_code $?
+
+	echo_white Updating node to latest ...
+	sudo hb-service update-node
+	check_exit_code $?
+
+	echo nodejs ver: $(node -v)
+	echo npm ver: $(npm -v)
+	
+	
+	
+	
+	# this creates the homebridge auto start service
 	echo_white Installing homebridge service
 	sudo hb-service install --user pi
 	EXIT_CODE=$?
@@ -896,7 +930,7 @@ backup(){
 
 
 
-uninstall() {
+homebridge_pi_uninstall() {
 	echo_white Uninstalling homebridge service ...
 	sudo hb-service uninstall
 	check_exit_code $?
@@ -1017,13 +1051,13 @@ uninstall() {
 }
 
 
-install() {
+homebridge_pi_install() {
 	echo homebridge-pi.sh ver $SCRIPT_VER
 	system_check
 	
 	install_prerequisites $1
 
-	install_homebridge $1
+	homebridge_install $1
 
 	#if [ -z $hw_serial_no ]; then
 	#	echo WARNING No serial number found
@@ -1038,6 +1072,9 @@ install() {
 	#echo Starting homebrige UI ...
 	#xdg-open http://localhost:8581
 	
+	echo_white restarting homebridge...
+	sudo hb-service restart
+	check_exit_code $?
 	
 	echo type 'hb-service -h' for info...
 	echo --------------------------------------------------
@@ -1083,7 +1120,7 @@ case $1 in
 			RESULT="y"
 		fi	
 		if [[ $RESULT == "y" ]]; then
-			install $2
+			homebridge_pi_install $2
 		fi
 		;;
 		
@@ -1092,7 +1129,7 @@ case $1 in
 		read -p "Uninstall Homebridge [y/N] ?" -n 1 -r RESULT
 		echo
 		if [[ $RESULT == "y" ]]; then
-			uninstall $2
+			homebridge_pi_uninstall $2
 		fi
 		;;
 
