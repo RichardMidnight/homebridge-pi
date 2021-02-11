@@ -21,7 +21,7 @@
 #note:  sudo systemctl daemon-reload
 
 
-SCRIPT_VER=20210204.002
+SCRIPT_VER=20210211.001
 
 #minimums
 #NODEJS_MIN=12
@@ -84,7 +84,6 @@ echo
 
 
 
-
 ####################################################################################
 #Library
 ####################################################################################
@@ -128,7 +127,6 @@ echo_black()        { (echo -e "${BLACK}$*${NC}") }
 }
 
 
-
 check_exit_code(){
 # $1 is exit code
   if [[ $1 == 0 ]] ; then
@@ -144,7 +142,6 @@ check_exit_code(){
     read -n1
   fi
 }
-
 
 
 compare_nums()
@@ -171,12 +168,11 @@ compare_nums()
 
    # If you want to print the exit code as well (instead of only returning it), uncomment
    # the awk line below and comment the uncommented one which is two lines below.
-   #awk 'BEGIN {print return_code=('$num1' '$op' '$num2') ? 0 : 1; exit} END {exit return_code}'
-   awk 'BEGIN {return_code=('$num1' '$op' '$num2') ? 0 : 1; exit} END {exit return_code}'
+   awk 'BEGIN {print return_code=('$num1' '$op' '$num2') ? 0 : 1; exit} END {exit return_code}'
+   #awk 'BEGIN {return_code=('$num1' '$op' '$num2') ? 0 : 1; exit} END {exit return_code}'
    return_code=$?
    return $return_code
 }
-
 
 
 verToInt() {
@@ -186,7 +182,6 @@ verToInt() {
 	let val=1000000*parts[0]+1000*parts[1]+parts[2]
 	echo $val
 }
-
 
 
 update_script() {
@@ -210,41 +205,18 @@ update_script() {
 }
 
 
-
 pi_model() {
   # -s means short version
 
   if [ -f "/proc/device-tree/model" ]; then
-    case $1 in
-    -s)
-     revision=$(cat /proc/cpuinfo | grep 'Revision' | cut -d: -f2 | sed -e 's/^[ \t]*//')
-      case $revision in
-        c03111)	  model="4B"	;;   #4GB
-        b03111)	  model="4B"	;;   #2GB
-        a03111)	  model="4B"	;;   #1GB
-        9020e0)	  model="3A+"		;;
-        a020d3)	  model="3B+"		;;
-        a32082)	  model="3B"		;;
-        a22082)	  model="3B"		;;
-        a02082)   model="3B"		;;
-        *)	  model="unknown"	;;
-      esac
-      echo $model
-      ;;
 
-    *)
       # like: Raspberry Pi 3 Model B Rev 1.2
-      cat /proc/device-tree/model
-      echo
-      ;;
-    esac
+      cat /proc/device-tree/model | cut -d" " -f 3
+
   else 
     echo "not a raspberry pi"
   fi
 }
-
-
-
 
 
 os_version() {
@@ -262,15 +234,13 @@ os_version() {
 }
 
 
-
 wiringpi_ver() {
-  if [ $(which gpio) ]; then
+  if [ ! -z $(which gpio) ]; then
      gpio -v | grep version | cut -d" " -f3
   else
     echo 0  
   fi
 }
-
 
 
 check_config_json() {
@@ -291,7 +261,6 @@ check_config_json() {
     return 1  #false
   fi
 }  
-
 
 
 ##################################################################
@@ -337,13 +306,12 @@ homebridge_username_target() {
   #e=${PI_SERIAL_NO:12:2}
   #f=${PI_SERIAL_NO:14:2}
 
-	a=${PI_SERIAL_NO: -12:2}
-	b=${PI_SERIAL_NO: -10:2}
-	c=${PI_SERIAL_NO: -8:2}
-	d=${PI_SERIAL_NO: -6:2}
-	e=${PI_SERIAL_NO: -4:2}
-	f=${PI_SERIAL_NO: -2:2}
-  
+  a=${PI_SERIAL_NO: -12:2}
+  b=${PI_SERIAL_NO: -10:2}
+  c=${PI_SERIAL_NO: -8:2}
+  d=${PI_SERIAL_NO: -6:2}
+  e=${PI_SERIAL_NO: -4:2}
+  f=${PI_SERIAL_NO: -2:2}
   
   HB_USERNAME=$a:$b:$c:$d:$e:$f
   echo $HB_USERNAME
@@ -408,11 +376,7 @@ homebridge_rename(){
 
 
 
-
 ###################### End library #######################
-
-
-
 
 
 homebridge_info(){
@@ -641,11 +605,11 @@ upgrade_homebridge()  {
 	check_exit_code $?
 
 	echo_white Update NODE
-	
-	
+
+
 	echo_white Update NPM
-	
-	
+
+
 	echo_white Upgrading homebridge ...
 	homebridge_install
 	check_exit_code $?
@@ -673,11 +637,13 @@ upgrade_homebridge()  {
 
 update_wiringpi(){
 	echo_white "Upgrading wiring pi if needed ..."
-	if [[ $(pi_model -s) == "4B" ]] && [[ $(wiringpi_ver) < 2.52 ]]; then
-		echo Pi model: $(pi_model -s)
+	#compare_nums 1 ">" 2 
+	#if compare_nums $SCRIPT_VER "<" $NEW_VER
+	if [ "$(pi_model)" = "4" ] && [ $(compare_nums $(wiringpi_ver) "<" 2.52) ]; then
+		echo Pi model: $(pi_model)
 		echo Wiringpi ver: $(wiringpi_ver)
 		echo_red WARNING ...
-		echo Raspberry Pi model \'$(pi_model -s)\' needs wiringpi 2.52 or better
+		echo Raspberry Pi model \'$(pi_model)\' needs wiringpi 2.52 or better
 
 		if ! [[ $1 == '-y' ]]; then
 			read -p "Upgrade wiring pi to 2.52 or later?"  -n1 -r RESULT
@@ -690,7 +656,7 @@ update_wiringpi(){
 			echo_white Getting updated wiring pi from drogon.net ...
 			wget https://project-downloads.drogon.net/wiringpi-latest.deb
 			check_exit_code $?
-			echo_white Installing wiring pi ...
+			echo_white Updating wiring pi to latest ...
 			sudo dpkg -i wiringpi-latest.deb
 			check_exit_code $?
 			gpio -v | grep version
@@ -700,8 +666,6 @@ update_wiringpi(){
 		echo_green "OK"
 	fi
 }
-
-
 
 
 
@@ -738,8 +702,9 @@ install_prerequisites(){
 	sudo apt install -y build-essential
 	check_exit_code $?
   
-  
-	if [[ $(uname -m) == "armv7l" ]]; then
+	MODEL=$(cat /proc/device-tree/model | cut -d' ' -f 1-2) 
+	if [ "$MODEL" = "Raspberry Pi" ]; then
+	#if [[ $(uname -m) == "armv7l" ]] || [[ $(uname -m) == "aarch64" ]]; then
 		echo_white "Installing wiring pi ..."
 		sudo apt install wiringpi -y
 		check_exit_code $? 
@@ -747,6 +712,8 @@ install_prerequisites(){
 		update_wiringpi $1
 		check_exit_code $?
 	fi
+  
+#exit  
   
   
 	echo_white  "Install jq (json query) ..."
@@ -896,6 +863,9 @@ Categories=None;" >> "/var/lib/homebridge/Homebridge.desktop"
 	
 	
 	# upgrade to recomended node and npm
+	echo nodejs ver: $(node -v)
+	echo npm ver: $(npm -v)
+	
 	echo_white Updating npm to latest ...
 	sudo npm install -g npm
 	check_exit_code $?
@@ -911,7 +881,7 @@ Categories=None;" >> "/var/lib/homebridge/Homebridge.desktop"
 	
 	
 	# this creates the homebridge auto start service
-	echo_white Installing homebridge service
+	echo_white Installing homebridge service ...
 	sudo hb-service install --user pi
 	EXIT_CODE=$?
 }
